@@ -1,0 +1,311 @@
+```html
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusSkin Hub - Bus Simulator Ultimate Skin & Mod Platformu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0b0f19',
+                            800: '#111827',
+                            700: '#1f2937',
+                            600: '#374151'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- OneSignal SDK Web Entegrasyonu -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      window.OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "c479c59f-11e8-4a39-9b61-8afe22d428fd",
+        });
+      });
+    </script>
+</head>
+<body class="bg-dark-900 text-gray-100 min-h-screen font-sans selection:bg-purple-600 selection:text-white">
+
+    <!-- Duyuru Barı -->
+    <div id="announcementBar" class="hidden bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white px-4 py-2.5 text-center text-sm font-medium shadow-md relative z-50 flex items-center justify-center space-x-2">
+        <i class="fa-solid fa-bullhorn text-amber-300 animate-bounce"></i>
+        <span id="announcementText">Duyuru metni buraya gelecek...</span>
+    </div>
+
+    <!-- Navbar -->
+    <header class="sticky top-0 z-40 bg-dark-800/90 backdrop-blur-md border-b border-dark-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo & Online Sayaç -->
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('explore')">
+                    <div class="bg-gradient-to-tr from-purple-600 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-purple-500/30">
+                        <i class="fa-solid fa-bus text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">BusSkin Hub</span>
+                </div>
+
+                <!-- Online Sayaç Rozeti -->
+                <div class="hidden sm:flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full text-xs font-semibold text-emerald-400">
+                    <span class="relative flex h-2.5 w-2.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                    <span id="onlineCounterText">0 Canlı Ziyaretçi</span>
+                </div>
+            </div>
+
+            <!-- Nav Actions -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <button onclick="switchView('explore')" class="px-3 sm:px-4 py-2 rounded-xl bg-dark-700 hover:bg-dark-600 text-sm font-medium transition flex items-center space-x-2">
+                    <i class="fa-solid fa-compass text-purple-400"></i>
+                    <span class="hidden sm:inline">Skinler</span>
+                </button>
+
+                <!-- Admin Panel Button -->
+                <button id="navAdminBtn" onclick="switchView('admin')" class="hidden px-3 sm:px-4 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 text-sm font-medium transition items-center space-x-2 border border-purple-500/30">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span class="hidden sm:inline">Admin Paneli</span>
+                </button>
+
+                <div id="authNavSection" class="flex items-center space-x-2"></div>
+
+                <button onclick="openVipRequestModal()" class="px-3 sm:px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold transition flex items-center space-x-2 shadow-lg shadow-amber-600/20">
+                    <i class="fa-solid fa-crown text-lg"></i>
+                    <span class="hidden md:inline">VIP Üyelik Al</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- EXPLORE VIEW -->
+        <div id="exploreView" class="space-y-8">
+            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-purple-900/40 via-indigo-900/20 to-dark-800 p-6 sm:p-10 border border-purple-500/20">
+                <div class="max-w-2xl space-y-4">
+                    <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-semibold uppercase tracking-wider border border-purple-500/30">Bus Simulator Ultimate Mod Portalı</span>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">En Kaliteli Otobüs Kaplamaları ve Skinler</h1>
+                    <p class="text-gray-300 text-sm sm:text-base">Şirketiniz için özel tasarlanmış otobüs kaplamalarını keşfedin, indirmek ve yorum yapmak için hemen giriş yapın.</p>
+                </div>
+            </div>
+
+            <!-- Filters & Search -->
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-dark-800/60 p-4 rounded-2xl border border-dark-700">
+                <div class="relative w-full md:w-96">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
+                    <input type="text" id="searchInput" oninput="filterContent()" placeholder="Otobüs modeli veya firma ara..." class="w-full bg-dark-900 border border-dark-700 rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:border-purple-500 transition text-white">
+                </div>
+                <div class="flex items-center space-x-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0" id="categoryChips"></div>
+                <select id="typeFilter" onchange="filterContent()" class="bg-dark-900 border border-dark-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-500 transition w-full md:w-auto text-white">
+                    <option value="all">Tüm Skinler</option>
+                    <option value="Ücretsiz">Ücretsiz</option>
+                    <option value="VIP">VIP Özel</option>
+                </select>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-bus text-orange-500"></i>
+                    <span>Skin Arşivi</span>
+                </h2>
+                <div id="movieGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"></div>
+            </div>
+        </div>
+
+        <!-- ADMIN PANEL VIEW -->
+        <div id="adminView" class="hidden space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-dark-700 pb-6">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-white">Yönetici Kontrol Paneli</h1>
+                    <p class="text-gray-400 text-sm mt-1">Platformdaki duyuruları, bildirimleri, VIP taleplerini, kategorileri, skinleri ve kullanıcı yetkilerini buradan yönetebilirsiniz.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="openCategoryModal()" class="px-4 py-2.5 rounded-xl bg-dark-700 hover:bg-dark-600 text-sm font-semibold transition flex items-center space-x-2">
+                        <i class="fa-solid fa-folder-plus text-purple-400"></i>
+                        <span>Kategori Ekle</span>
+                    </button>
+                    <button onclick="openMovieModal()" class="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-sm font-semibold transition flex items-center space-x-2 shadow-lg shadow-purple-600/20">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Yeni Skin Ekle</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Gelen VIP Üyelik Talepleri Paneli -->
+            <div id="vipRequestsCard" class="bg-dark-800/60 rounded-2xl border border-dark-700 p-6 space-y-4 shadow-xl border-amber-500/20">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-envelope-open-text text-amber-400"></i>
+                    <span>Gelen VIP Üyelik Talepleri ve Telefon Numaraları</span>
+                </h3>
+                <div id="vipRequestsList" class="space-y-3 max-h-80 overflow-y-auto pr-1"></div>
+            </div>
+
+            <!-- Push Bildirim Paneli -->
+            <div id="pushNotificationCard" class="bg-dark-800/60 rounded-2xl border border-dark-700 p-6 space-y-4 shadow-xl border-purple-500/20">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-bell text-amber-400"></i>
+                    <span>Kullanıcılara Anlık Bildirim Gönder (Push Notification)</span>
+                </h3>
+                <form onsubmit="handleSendPushNotification(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-xs font-semibold text-gray-300">Bildirim Başlığı</label>
+                            <input type="text" id="pushTitleInput" required placeholder="Örn: Yeni Travego Skini Eklendi! 🚌" class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 text-white">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-semibold text-gray-300">Yönlendirilecek Link (Opsiyonel)</label>
+                            <input type="url" id="pushUrlInput" placeholder="https://siteniz.com" class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 text-white">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-gray-300">Bildirim İçerik Mesajı</label>
+                        <textarea id="pushMessageInput" required rows="2" placeholder="En yeni kaplamalar yayında!" class="w-full bg-dark-900 border border-dark-700 rounded-xl p-3 text-sm focus:outline-none focus:border-purple-500 text-white"></textarea>
+                    </div>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 font-semibold text-white text-sm transition shadow-lg shadow-amber-600/20 flex items-center space-x-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Tüm Kullanıcılara Bildirim Gönder</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Duyuru Yönetim Paneli -->
+            <div id="announcementCard" class="bg-dark-800/60 rounded-2xl border border-dark-700 p-6 space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-bullhorn text-purple-400"></i>
+                    <span>Site Geneli Duyuru Yönetimi</span>
+                </h3>
+                <form onsubmit="handleAnnouncementSubmit(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-2 space-y-1">
+                            <label class="text-xs font-semibold text-gray-300">Duyuru Metni</label>
+                            <input type="text" id="adminAnnouncementInput" placeholder="Örn: Yeni kaplamalar eklendi!" class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 text-white">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-semibold text-gray-300">Durum</label>
+                            <select id="adminAnnouncementStatus" class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 text-white">
+                                <option value="true">Aktif (Sitede Göster)</option>
+                                <option value="false">Pasif (Gizle)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 font-semibold text-white text-sm transition shadow-lg shadow-purple-600/20">Duyuruyu Güncelle / Yayınla</button>
+                </form>
+            </div>
+
+            <!-- Kategoriler Yönetimi -->
+            <div class="bg-dark-800/60 rounded-2xl border border-dark-700 p-6 space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-tags text-purple-400"></i>
+                    <span>Kategori Listesi</span>
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3" id="adminCategoryList"></div>
+            </div>
+
+            <!-- Skin Yönetimi -->
+            <div class="bg-dark-800/60 rounded-2xl border border-dark-700 p-6 space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-bus text-purple-400"></i>
+                    <span>Skin ve Mod Envanteri</span>
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-dark-700 text-gray-400 text-xs uppercase tracking-wider">
+                                <th class="py-3 px-4">Skin</th>
+                                <th class="py-3 px-4">Otobüs / Kategori</th>
+                                <th class="py-3 px-4">Erişim</th>
+                                <th class="py-3 px-4 text-right">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminMovieList" class="divide-y divide-dark-700/50 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Kullanıcı Yönetimi -->
+            <div class="bg-dark-800/60 rounded-2xl border border-dark-700 p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-users-gear text-purple-400"></i>
+                        <span>Kullanıcı Yönetimi</span>
+                    </h3>
+                    <button onclick="openUserModal()" class="px-3 py-1.5 rounded-lg bg-dark-700 hover:bg-dark-600 text-xs font-medium transition">
+                        <i class="fa-solid fa-user-plus mr-1"></i> Manuel Kullanıcı Ekle
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-dark-700 text-gray-400 text-xs uppercase tracking-wider">
+                                <th class="py-3 px-4">Kullanıcı Adı</th>
+                                <th class="py-3 px-4">E-posta</th>
+                                <th class="py-3 px-4" id="thPasswordColumn">Şifre</th>
+                                <th class="py-3 px-4">Rol</th>
+                                <th class="py-3 px-4">VIP Durumu</th>
+                                <th class="py-3 px-4">Durum</th>
+                                <th class="py-3 px-4 text-right">Yönetim İşlemleri</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUserList" class="divide-y divide-dark-700/50 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 border-t border-dark-700 bg-dark-800/40 py-8 text-center text-sm text-gray-500">
+        <p>&copy; 2026 BusSkin Hub. Tüm hakları saklıdır. Bulut Veritabanı Senkronizasyonu Aktif.</p>
+    </footer>
+
+    <!-- MODALS -->
+    <!-- VIP Talep Modalı -->
+    <div id="vipRequestModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="bg-dark-800 border border-dark-700 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 relative shadow-2xl">
+            <button onclick="closeVipRequestModal()" class="absolute right-5 top-5 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center mx-auto text-2xl border border-amber-500/30">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white">VIP Üyelik Talebi Gönder</h3>
+            </div>
+            <form onsubmit="handleSendVipRequest(event)" class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">Adınız veya Şirket Adınız</label>
+                    <input type="text" id="vipReqName" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white" placeholder="Örn: Kamil Koç Turizm">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-gray-300">E-posta Adresiniz</label>
+                        <input type="email" id="vipReqEmail" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white" placeholder="ornek@mail.com">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-gray-300">Telefon Numaranız</label>
+                        <input type="tel" id="vipReqPhone" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white" placeholder="0555 555 55 55">
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">İstediğiniz Süre & Notunuz</label>
+                    <textarea id="vipReqMessage" required rows="3" placeholder="Örn: 1 Aylık VIP skin paketi almak istiyorum..." class="w-full bg-dark-900 border border-dark-700 rounded-xl p-3 text-sm text-white"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-500 font-semibold text-white transition shadow-lg">Talebi Admin'e Gönder</button>
+            </form>
+        </d
