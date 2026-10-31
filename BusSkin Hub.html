@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusSkin Hub - Bus Simulator Ultimate Skin & Mod Platformu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0b0f19',
+                            800: '#111827',
+                            700: '#1f2937',
+                            600: '#374151'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- OneSignal SDK Web Entegrasyonu -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      window.OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "c479c59f-11e8-4a39-9b61-8afe22d428fd",
+        });
+      });
+    </script>
+</head>
+<body class="bg-dark-900 text-gray-100 min-h-screen font-sans selection:bg-purple-600 selection:text-white">
+
+    <!-- Duyuru Barı -->
+    <div id="announcementBar" class="hidden bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white px-4 py-2.5 text-center text-sm font-medium shadow-md relative z-50 flex items-center justify-center space-x-2">
+        <i class="fa-solid fa-bullhorn text-amber-300 animate-bounce"></i>
+        <span id="announcementText">Duyuru metni buraya gelecek...</span>
+    </div>
+
+    <!-- Navbar -->
+    <header class="sticky top-0 z-40 bg-dark-800/90 backdrop-blur-md border-b border-dark-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo & Online Sayaç -->
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('explore')">
+                    <div class="bg-gradient-to-tr from-purple-600 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-purple-500/30">
+                        <i class="fa-solid fa-bus text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">BusSkin Hub</span>
+                </div>
+
+                <!-- Online Sayaç Rozeti -->
+                <div class="hidden sm:flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full text-xs font-semibold text-emerald-400">
+                    <span class="relative flex h-2.5 w-2.5">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
+                    <span id="onlineCounterText">0 Canlı Ziyaretçi</span>
+                </div>
+            </div>
+
+            <!-- Nav Actions -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <button onclick="switchView('explore')" class="px-3 sm:px-4 py-2 rounded-xl bg-dark-700 hover:bg-dark-600 text-sm font-medium transition flex items-center space-x-2">
+                    <i class="fa-solid fa-compass text-purple-400"></i>
+                    <span class="hidden sm:inline">Skinler</span>
+                </button>
+
+                <!-- Admin Panel Button -->
+                <button id="navAdminBtn" onclick="switchView('admin')" class="hidden px-3 sm:px-4 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-400 text-sm font-medium transition items-center space-x-2 border border-purple-500/30">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span class="hidden sm:inline">Admin Paneli</span>
+                </button>
+
+                <div id="authNavSection" class="flex items-center space-x-2"></div>
+
+                <button onclick="openVipRequestModal()" class="px-3 sm:px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold transition flex items-center space-x-2 shadow-lg shadow-amber-600/20">
+                    <i class="fa-solid fa-crown text-lg"></i>
+                    <span class="hidden md:inline">VIP Üyelik Al</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- EXPLORE VIEW -->
+        <div id="exploreView" class="space-y-8">
+            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-purple-900/40 via-indigo-900/20 to-dark-800 p-6 sm:p-10 border border-purple-500/20">
+                <div class="max-w-2xl space-y-4">
+                    <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-semibold uppercase tracking-wider border border-purple-500/30">Bus Simulator Ultimate Mod Portalı</span>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">En Kaliteli Otobüs Kaplamaları ve Skinler</h1>
+                    <p class="text-gray-300 text-sm sm:text-base">Şirketiniz için özel tasarlanmış otobüs kaplamalarını keşfedin, indirmek ve yorum yapmak için hemen giriş yapın.</p>
+                </div>
+            </div>
+
+            <!-- Filters & Search -->
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-dark-800/60 p-4 rounded-2xl border border-dark-700">
+                <div class="relative w-full md:w-96">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
+                    <input type="text" id="searchInput" oninput="filterContent()" placeholder="Otobüs modeli veya firma ara..." class="w-full bg-dark-900 border border-dark-700 rounded-xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:border-purple-500 transition text-white">
+                </div>
+                <div class="flex items-center space-x-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0" id="categoryChips"></div>
+                <select id="typeFilter" onchange="filterContent()" class="bg-dark-900 border border-dark-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-500 transition w-full md:w-auto text-white">
+                    <option value="all">Tüm Skinler</option>
+                    <option value="Ücretsiz">Ücretsiz</option>
+                    <option value="VIP">VIP Özel</option>
+                </select>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-bus text-orange-500"></i>
+                    <span>Skin Arşivi</span>
+                </h2>
+                <div id="movieGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6"></div>
+            </div>
+        </div>
+
+        <!-- ADMIN PANEL VIEW -->
+        <div id="adminView" class="hidden space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-dark-700 pb-6">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-white">Yönetici Kontrol Paneli</h1>
+                    <p class="text-gray-400 text-sm mt-1">Platformdaki duyuruları, bildirimleri, VIP taleplerini, kategorileri, skinleri ve kullanıcı yetkilerini buradan yönetebilirsiniz.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="openCategoryModal()" class="px-4 py-2.5 rounded-xl bg-dark-700 hover:bg-dark-600 text-sm font-semibold transition flex items-center space-x-2">
+                        <i class="fa-solid fa-folder-plus text-purple-400"></i>
+                        <span>Kategori Ekle</span>
+                    </button>
+                    <button onclick="openMovieModal()" class="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-sm font-semibold transition flex items-center space-x-2 shadow-lg shadow-purple-600/20">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Yeni Skin Ekle</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Gelen VIP Üyelik Talepleri Paneli -->
+            <div id="vipRequestsCard" class="bg-dark-800/60 rounded-2xl border border-dark-700 p-6 space-y-4 shadow-xl border-amber-500/20">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-envelope-open-text text-amber-400"></i>
+                    <span>Gelen VIP Üyelik Talepleri ve Telefon Numaraları</span>
+                </h3>
+                <div id="vipRequestsList" class="space-y-3 max-h-80 overflow-y-auto pr-1"></div>
+            </div>
+
+            <!-- Push Bildirim Paneli -->
+            <div id="pushNotificationCard" class="bg-dark-800/60 rounded-2xl border border-dark-700 p-6 space-y-4 shadow-xl border-purple-500/20">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-bell text-amber-400"></i>
+                    <span>Kullanıcılara Anlık Bildirim Gönder (Push Notification)</span>
+                </h3>
+                <form onsubmit="handleSendPushNotification(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-xs font-semibold text-gray-300">Bildirim Başlığı</label>
+                            <input type="text" id="pushTitleInput" required placeholder="Örn: Yeni Travego Skini Eklendi! 🚌" class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 text-white">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-semibold text-gray-300">Yönlendirilecek Link (Opsiyonel)</label>
+                            <input type="url" id="pushUrlInput" placeholder="https://siteniz.com" class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 text-white">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-gray-300">Bildirim İçerik Mesajı</label>
+                        <textarea id="pushMessageInput" required rows="2" placeholder="En yeni kaplamalar yayında!" class="w-full bg-dark-900 border border-dark-700 rounded-xl p-3 text-sm focus:outline-none focus:border-purple-500 text-white"></textarea>
+                    </div>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 font-semibold text-white text-sm transition shadow-lg shadow-amber-600/20 flex items-center space-x-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Tüm Kullanıcılara Bildirim Gönder</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Duyuru Yönetim Paneli -->
+            <div id="announcementCard" class="bg-dark-800/60 rounded-2xl border border-dark-700 p-6 space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-bullhorn text-purple-400"></i>
+                    <span>Site Geneli Duyuru Yönetimi</span>
+                </h3>
+                <form onsubmit="handleAnnouncementSubmit(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-2 space-y-1">
+                            <label class="text-xs font-semibold text-gray-300">Duyuru Metni</label>
+                            <input type="text" id="adminAnnouncementInput" placeholder="Örn: Yeni kaplamalar eklendi!" class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 text-white">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-semibold text-gray-300">Durum</label>
+                            <select id="adminAnnouncementStatus" class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 text-white">
+                                <option value="true">Aktif (Sitede Göster)</option>
+                                <option value="false">Pasif (Gizle)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 font-semibold text-white text-sm transition shadow-lg shadow-purple-600/20">Duyuruyu Güncelle / Yayınla</button>
+                </form>
+            </div>
+
+            <!-- Kategoriler Yönetimi -->
+            <div class="bg-dark-800/60 rounded-2xl border border-dark-700 p-6 space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-tags text-purple-400"></i>
+                    <span>Kategori Listesi</span>
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3" id="adminCategoryList"></div>
+            </div>
+
+            <!-- Skin Yönetimi -->
+            <div class="bg-dark-800/60 rounded-2xl border border-dark-700 p-6 space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i class="fa-solid fa-bus text-purple-400"></i>
+                    <span>Skin ve Mod Envanteri</span>
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-dark-700 text-gray-400 text-xs uppercase tracking-wider">
+                                <th class="py-3 px-4">Skin</th>
+                                <th class="py-3 px-4">Otobüs / Kategori</th>
+                                <th class="py-3 px-4">Erişim</th>
+                                <th class="py-3 px-4 text-right">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminMovieList" class="divide-y divide-dark-700/50 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Kullanıcı Yönetimi -->
+            <div class="bg-dark-800/60 rounded-2xl border border-dark-700 p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-users-gear text-purple-400"></i>
+                        <span>Kullanıcı Yönetimi</span>
+                    </h3>
+                    <button onclick="openUserModal()" class="px-3 py-1.5 rounded-lg bg-dark-700 hover:bg-dark-600 text-xs font-medium transition">
+                        <i class="fa-solid fa-user-plus mr-1"></i> Manuel Kullanıcı Ekle
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-dark-700 text-gray-400 text-xs uppercase tracking-wider">
+                                <th class="py-3 px-4">Kullanıcı Adı</th>
+                                <th class="py-3 px-4">E-posta</th>
+                                <th class="py-3 px-4" id="thPasswordColumn">Şifre</th>
+                                <th class="py-3 px-4">Rol</th>
+                                <th class="py-3 px-4">VIP Durumu</th>
+                                <th class="py-3 px-4">Durum</th>
+                                <th class="py-3 px-4 text-right">Yönetim İşlemleri</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUserList" class="divide-y divide-dark-700/50 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 border-t border-dark-700 bg-dark-800/40 py-8 text-center text-sm text-gray-500">
+        <p>&copy; 2026 BusSkin Hub. Tüm hakları saklıdır. Bulut Veritabanı Senkronizasyonu Aktif.</p>
+    </footer>
+
+    <!-- MODALS -->
+    <!-- VIP Talep Modalı -->
+    <div id="vipRequestModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="bg-dark-800 border border-dark-700 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 relative shadow-2xl">
+            <button onclick="closeVipRequestModal()" class="absolute right-5 top-5 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center mx-auto text-2xl border border-amber-500/30">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white">VIP Üyelik Talebi Gönder</h3>
+            </div>
+            <form onsubmit="handleSendVipRequest(event)" class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">Adınız veya Şirket Adınız</label>
+                    <input type="text" id="vipReqName" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white" placeholder="Örn: Kamil Koç Turizm">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-gray-300">E-posta Adresiniz</label>
+                        <input type="email" id="vipReqEmail" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white" placeholder="ornek@mail.com">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-gray-300">Telefon Numaranız</label>
+                        <input type="tel" id="vipReqPhone" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white" placeholder="0555 555 55 55">
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">İstediğiniz Süre & Notunuz</label>
+                    <textarea id="vipReqMessage" required rows="3" placeholder="Örn: 1 Aylık VIP skin paketi almak istiyorum..." class="w-full bg-dark-900 border border-dark-700 rounded-xl p-3 text-sm text-white"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-500 font-semibold text-white transition shadow-lg">Talebi Admin'e Gönder</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Giriş / Kayıt Ol Modalı -->
+    <div id="authModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="bg-dark-800 border border-dark-700 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 relative shadow-2xl">
+            <button onclick="closeAuthModal()" class="absolute right-5 top-5 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 bg-purple-500/20 text-purple-400 rounded-2xl flex items-center justify-center mx-auto text-2xl border border-purple-500/30">
+                    <i class="fa-solid fa-user-circle"></i>
+                </div>
+                <h3 id="authModalTitle" class="text-2xl font-bold text-white">Giriş Yap</h3>
+                <p id="authModalDesc" class="text-xs text-gray-400">Skinleri indirmek ve yorum yapmak için hesabınıza giriş yapın.</p>
+            </div>
+            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <div id="authNameField" class="space-y-1 hidden">
+                    <label class="text-xs font-semibold text-gray-300">Kullanıcı Adı</label>
+                    <input type="text" id="authNameInput" class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white" placeholder="Kullanıcı adınız">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">E-posta Adresi</label>
+                    <input type="email" id="authEmailInput" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white" placeholder="ornek@mail.com">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">Şifre</label>
+                    <input type="password" id="authPasswordInput" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white" placeholder="••••••••">
+                </div>
+                <button type="submit" id="authSubmitBtn" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 font-semibold text-white transition shadow-lg shadow-purple-600/20">Giriş Yap</button>
+            </form>
+            <div class="text-center">
+                <button type="button" onclick="toggleAuthMode()" id="authSwitchBtn" class="text-xs text-purple-400 hover:underline">Hesabın yok mu? Kayıt ol</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skin Ekleme / Düzenleme Modalı -->
+    <div id="movieModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="bg-dark-800 border border-dark-700 rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-6 relative shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeMovieModal()" class="absolute right-5 top-5 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 id="movieModalTitle" class="text-2xl font-bold text-white">Yeni Skin Ekle</h3>
+            <form onsubmit="handleMovieSubmit(event)" class="space-y-4">
+                <input type="hidden" id="editMovieId">
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">Otobüs Modeli / Firma Adı</label>
+                    <input type="text" id="movieTitleInput" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white" placeholder="Örn: Mercedes-Benz Travego - Kamil Koç">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-gray-300">Kategori</label>
+                        <select id="movieCategoryInput" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white"></select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-gray-300">Erişim Tipi</label>
+                        <select id="movieTypeInput" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                            <option value="Ücretsiz">Ücretsiz</option>
+                            <option value="VIP">VIP Özel</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">Görsel URL</label>
+                    <input type="url" id="movieImageInput" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white" placeholder="https://ornek.com/gorsel.jpg">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">İndirme / Dosya Linki</label>
+                    <input type="url" id="movieDownloadInput" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white" placeholder="https://mods.bas/skin-indir">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">Açıklama</label>
+                    <textarea id="movieDescInput" rows="3" class="w-full bg-dark-900 border border-dark-700 rounded-xl p-3 text-sm text-white" placeholder="Kısa bilgi..."></textarea>
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 font-semibold text-white transition shadow-lg">Skini Kaydet</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Kategori Ekleme Modalı -->
+    <div id="categoryModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="bg-dark-800 border border-dark-700 rounded-3xl max-w-sm w-full p-6 space-y-6 relative shadow-2xl">
+            <button onclick="closeCategoryModal()" class="absolute right-5 top-5 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 class="text-xl font-bold text-white">Yeni Kategori Ekle</h3>
+            <form onsubmit="handleCategorySubmit(event)" class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">Kategori Adı</label>
+                    <input type="text" id="categoryNameInput" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white" placeholder="Setra, Neoplan vb.">
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 font-semibold text-white transition">Kategoriyi Ekle</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Kullanıcı Ekleme Modalı -->
+    <div id="userModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="bg-dark-800 border border-dark-700 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-6 relative shadow-2xl">
+            <button onclick="closeUserModal()" class="absolute right-5 top-5 text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 id="userModalTitle" class="text-2xl font-bold text-white">Manuel Kullanıcı Ekle</h3>
+            <form onsubmit="handleUserSubmit(event)" class="space-y-4">
+                <input type="hidden" id="editUserOriginalEmail">
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">Kullanıcı Adı</label>
+                    <input type="text" id="userNameInput" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">E-posta Adresi</label>
+                    <input type="email" id="userEmailInput" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold text-gray-300">Şifre</label>
+                    <input type="text" id="userPasswordInput" required class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-gray-300">Rol</label>
+                        <select id="userRoleInput" class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                            <option value="user">Üye</option>
+                            <option value="admin">Yönetici</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold text-gray-300">VIP Durumu</label>
+                        <select id="userVipInput" class="w-full bg-dark-900 border border-dark-700 rounded-xl px-4 py-2.5 text-sm text-white">
+                            <option value="false">Normal</option>
+                            <option value="true">VIP Üye</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 font-semibold text-white transition shadow-lg">Kullanıcıyı Kaydet</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT KODLARI -->
+    <script>
+        let currentUser = JSON.parse(localStorage.getItem('bus_current_user')) || null;
+        let isLoginMode = true;
+        let categories = JSON.parse(localStorage.getItem('bus_categories')) || ['Travego', 'Tourismo', 'Man', 'Setra', 'Neoplan'];
+        let movies = JSON.parse(localStorage.getItem('bus_movies')) || [
+            { id: 1, title: 'Mercedes-Benz Travego - Kamil Koç', category: 'Travego', type: 'Ücretsiz', image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80', downloadUrl: '#', description: 'Kamil Koç kurumsal renklerinde özel tasarlanmış Travego skini.' },
+            { id: 2, title: 'Setra S 511 HD - Pamukkale Turizm', category: 'Setra', type: 'VIP', image: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=600&q=80', downloadUrl: '#', description: 'Pamukkale Turizm VIP yolcu otobüsü kaplaması.' }
+        ];
+        let users = JSON.parse(localStorage.getItem('bus_users')) || [
+            { name: 'Onur Yılmaz', email: 'onurdmir22@gmail.com', password: '123', role: 'admin', vip: true, status: 'Aktif' }
+        ];
+        let vipRequests = JSON.parse(localStorage.getItem('bus_vip_requests')) || [];
+        let siteAnnouncement = JSON.parse(localStorage.getItem('bus_announcement')) || { text: 'BusSkin Hub v2.0 Yayında!', active: true };
+
+        function enforceMasterAdmin() {
+            let master = users.find(u => u.email === 'onurdmir22@gmail.com');
+            if (master) {
+                master.role = 'admin'; master.vip = true; master.status = 'Aktif';
+            } else {
+                users.push({ name: 'Onur Yılmaz', email: 'onurdmir22@gmail.com', password: '123', role: 'admin', vip: true, status: 'Aktif' });
+            }
+            localStorage.setItem('bus_users', JSON.stringify(users));
+            if (currentUser && currentUser.email === 'onurdmir22@gmail.com') {
+                currentUser.role = 'admin'; currentUser.vip = true;
+                localStorage.setItem('bus_current_user', JSON.stringify(currentUser));
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            enforceMasterAdmin();
+            renderAnnouncement();
+            renderNavbarAuth();
+            renderCategoryChips();
+            renderCategorySelects();
+            renderMovies();
+            renderOnlineCounter();
+
+            if (currentUser && currentUser.email === 'onurdmir22@gmail.com') currentUser.role = 'admin';
+            if (currentUser && currentUser.role === 'admin') {
+                document.getElementById('navAdminBtn').classList.remove('hidden');
+                renderAdminPanel();
+            } else {
+                document.getElementById('navAdminBtn').classList.add('hidden');
+            }
+        });
+
+        function renderOnlineCounter() {
+            let count = Math.floor(Math.random() * 40) + 15;
+            document.getElementById('onlineCounterText').innerText = count + ' Canlı Ziyaretçi';
+        }
+
+        function switchView(viewName) {
+            if (viewName === 'admin') {
+                if (!currentUser || currentUser.role !== 'admin') {
+                    alert('Yalnızca yöneticiler erişebilir!');
+                    openAuthModal();
+                    return;
+                }
+                document.getElementById('exploreView').classList.add('hidden');
+                document.getElementById('adminView').classList.remove('hidden');
+                renderAdminPanel();
+            } else {
+                document.getElementById('adminView').classList.add('hidden');
+                document.getElementById('exploreView').classList.remove('hidden');
+                renderMovies();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderAnnouncement() {
+            let bar = document.getElementById('announcementBar');
+            let textSpan = document.getElementById('announcementText');
+            if (siteAnnouncement && siteAnnouncement.active && siteAnnouncement.text) {
+                textSpan.innerText = siteAnnouncement.text;
+                bar.classList.remove('hidden');
+            } else { bar.classList.add('hidden'); }
+        }
+
+        function renderNavbarAuth() {
+            let section = document.getElementById('authNavSection');
+            if (currentUser) {
+                section.innerHTML = `
+                    <div class="flex items-center space-x-2 bg-dark-700 px-3 py-1.5 rounded-xl border border-dark-600">
+                        <i class="fa-solid fa-user-shield text-purple-400"></i>
+                        <span class="text-xs font-semibold text-white max-w-[100px] truncate">${currentUser.name}</span>
+                        <button onclick="handleLogout()" class="text-red-400 hover:text-red-300 ml-2"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>`;
+            } else {
+                section.innerHTML = `<button onclick="openAuthModal()" class="px-3 sm:px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold transition flex items-center space-x-2 shadow-lg"><i class="fa-solid fa-right-to-bracket"></i><span>Giriş Yap</span></button>`;
+            }
+        }
+
+        function renderCategoryChips() {
+            let container = document.getElementById('categoryChips');
+            let html = `<button onclick="filterByCategory('all')" class="px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-semibold whitespace-nowrap transition">Tümü</button>`;
+            categories.forEach(cat => {
+                html += `<button onclick="filterByCategory('${cat}')" class="px-4 py-2 rounded-xl bg-dark-700 hover:bg-dark-600 text-gray-300 text-xs font-semibold whitespace-nowrap transition">${cat}</button>`;
+            });
+            container.innerHTML = html;
+        }
+
+        let selectedCategoryFilter = 'all';
+        function filterByCategory(cat) { selectedCategoryFilter = cat; filterContent(); }
+
+        function renderCategorySelects() {
+            let select = document.getElementById('movieCategoryInput');
+            if(!select) return;
+            let html = '';
+            categories.forEach(cat => { html += `<option value="${cat}">${cat}</option>`; });
+            select.innerHTML = html;
+        }
+
+        function filterContent() {
+            let search = document.getElementById('searchInput').value.toLowerCase();
+            let type = document.getElementById('typeFilter').value;
+            let grid = document.getElementById('movieGrid');
+            let filtered = movies.filter(m => {
+                let matchSearch = m.title.toLowerCase().includes(search) || m.category.toLowerCase().includes(search);
+                let matchCat = selectedCategoryFilter === 'all' || m.category === selectedCategoryFilter;
+                let matchType = type === 'all' || m.type === type;
+                return matchSearch && matchCat && matchType;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-gray-400">Aradığınız kriterlere uygun skin bulunamadı.</div>`;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(m => {
+                let badgeColor = m.type === 'VIP' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+                html += `
+                    <div class="bg-dark-800/80 border border-dark-700 rounded-2xl overflow-hidden shadow-xl hover:border-purple-500/50 transition flex flex-col group">
+                        <div class="relative h-40 sm:h-48 overflow-hidden bg-dark-900">
+                            <img src="${m.image}" alt="${m.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border backdrop-blur-md ${badgeColor}">${m.type}</span>
+                            <span class="absolute bottom-3 left-3 px-2 py-0.5 rounded-md bg-dark-900/80 backdrop-blur-md text-gray-300 text-[10px] font-semibold">${m.category}</span>
+                        </div>
+                        <div class="p-4 flex flex-col flex-grow justify-between space-y-3">
+                            <div>
+                                <h3 class="font-bold text-white text-sm line-clamp-1">${m.title}</h3>
+                                <p class="text-xs text-gray-400 line-clamp-2 mt-1">${m.description || ''}</p>
+                            </div>
+                            <button onclick="downloadSkin(${m.id})" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-semibold text-white transition flex items-center justify-center space-x-2"><i class="fa-solid fa-download"></i><span>İndir / Modu Al</span></button>
+                        </div>
+                    </div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function downloadSkin(id) {
+            let skin = movies.find(m => m.id === id);
+            if (!skin) return;
+            if (skin.type === 'VIP') {
+                if (!currentUser) { alert('Giriş yapmalısınız!'); openAuthModal(); return; }
+                if (!currentUser.vip && currentUser.role !== 'admin') { alert('VIP üyelere özeldir!'); openVipRequestModal(); return; }
+            } else {
+                if (!currentUser) { alert('Giriş yapmalısınız!'); openAuthModal(); return; }
+            }
+            window.open(skin.downloadUrl, '_blank');
+        }
+
+        function openAuthModal() {
+            isLoginMode = true;
+            document.getElementById('authModalTitle').innerText = 'Giriş Yap';
+            document.getElementById('authSubmitBtn').innerText = 'Giriş Yap';
+            document.getElementById('authNameField').classList.add('hidden');
+            document.getElementById('authSwitchBtn').innerText = 'Hesabın yok mu? Kayıt ol';
+            document.getElementById('authModal').classList.remove('hidden'); document.getElementById('authModal').classList.add('flex');
+        }
+        function closeAuthModal() { document.getElementById('authModal').classList.remove('flex'); document.getElementById('authModal').classList.add('hidden'); }
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            if (isLoginMode) {
+                document.getElementById('authModalTitle').innerText = 'Giriş Yap';
+                document.getElementById('authSubmitBtn').innerText = 'Giriş Yap';
+                document.getElementById('authNameField').classList.add('hidden');
+                document.getElementById('authSwitchBtn').innerText = 'Hesabın yok mu? Kayıt ol';
+            } else {
+                document.getElementById('authModalTitle').innerText = 'Kayıt Ol';
+                document.getElementById('authSubmitBtn').innerText = 'Kayıt Ol';
+                document.getElementById('authNameField').classList.remove('hidden');
+                document.getElementById('authSwitchBtn').innerText = 'Zaten hesabın var mı? Giriş yap';
+            }
+        }
+
+        function openVipRequestModal() { document.getElementById('vipRequestModal').classList.remove('hidden'); document.getElementById('vipRequestModal').classList.add('flex'); }
+        function closeVipRequestModal() { document.getElementById('vipRequestModal').classList.remove('flex'); document.getElementById('vipRequestModal').classList.add('hidden'); }
+
+        function openMovieModal(editId = null) {
+            renderCategorySelects();
+            document.getElementById('editMovieId').value = editId || '';
+            if (editId) {
+                let m = movies.find(x => x.id === editId);
+                document.getElementById('movieModalTitle').innerText = 'Skini Düzenle';
+                document.getElementById('movieTitleInput').value = m.title;
+                document.getElementById('movieCategoryInput').value = m.category;
+                document.getElementById('movieTypeInput').value = m.type;
+                document.getElementById('movieImageInput').value = m.image;
+                document.getElementById('movieDownloadInput').value = m.downloadUrl;
+                document.getElementById('movieDescInput').value = m.description;
+            } else {
+                document.getElementById('movieModalTitle').innerText = 'Yeni Skin Ekle';
+                document.getElementById('movieTitleInput').value = '';
+                document.getElementById('movieImageInput').value = '';
+                document.getElementById('movieDownloadInput').value = '';
+                document.getElementById('movieDescInput').value = '';
+            }
+            document.getElementById('movieModal').classList.remove('hidden'); document.getElementById('movieModal').classList.add('flex');
+        }
+        function closeMovieModal() { document.getElementById('movieModal').classList.remove('flex'); document.getElementById('movieModal').classList.add('hidden'); }
+
+        function openCategoryModal() { document.getElementById('categoryModal').classList.remove('hidden'); document.getElementById('categoryModal').classList.add('flex'); }
+        function closeCategoryModal() { document.getElementById('categoryModal').classList.remove('flex'); document.getElementById('categoryModal').classList.add('hidden'); }
+
+        function openUserModal(editEmail = null) {
+            document.getElementById('editUserOriginalEmail').value = editEmail || '';
+            if (editEmail) {
+                let u = users.find(x => x.email === editEmail);
+                document.getElementById('userModalTitle').innerText = 'Kullanıcıyı Düzenle';
+                document.getElementById('userNameInput').value = u.name;
+                document.getElementById('userEmailInput').value = u.email;
+                document.getElementById('userPasswordInput').value = u.password;
+                document.getElementById('userRoleInput').value = u.role;
+                document.getElementById('userVipInput').value = u.vip.toString();
+            } else {
+                document.getElementById('userModalTitle').innerText = 'Manuel Kullanıcı Ekle';
+                document.getElementById('userNameInput').value = '';
+                document.getElementById('userEmailInput').value = '';
+                document.getElementById('userPasswordInput').value = '';
+                document.getElementById('userRoleInput').value = 'user';
+                document.getElementById('userVipInput').value = 'false';
+            }
+            document.getElementById('userModal').classList.remove('hidden'); document.getElementById('userModal').classList.add('flex');
+        }
+        function closeUserModal() { document.getElementById('userModal').classList.remove('flex'); document.getElementById('userModal').classList.add('hidden'); }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            let email = document.getElementById('authEmailInput').value.trim();
+            let password = document.getElementById('authPasswordInput').value.trim();
+            let name = document.getElementById('authNameInput').value.trim();
+
+            if (isLoginMode) {
+                let user = users.find(u => u.email === email && u.password === password);
+                if (user) {
+                    if (user.status === 'Pasif') { alert('Hesabınız askıya alınmıştır.'); return; }
+                    if (user.email === 'onurdmir22@gmail.com') { user.role = 'admin'; user.vip = true; }
+                    currentUser = user;
+                    localStorage.setItem('bus_current_user', JSON.stringify(currentUser));
+                    closeAuthModal();
+                    renderNavbarAuth();
+                    if (currentUser.role === 'admin') {
+                        document.getElementById('navAdminBtn').classList.remove('hidden');
+                        switchView('admin');
+                    } else {
+                        document.getElementById('navAdminBtn').classList.add('hidden');
+                        switchView('explore');
+                    }
+                    alert('Giriş başarılı!');
+                } else { alert('Hatalı e-posta veya şifre!'); }
+            } else {
+                if (users.some(u => u.email === email)) { alert('Bu e-posta kayıtlı!'); return; }
+                let newUser = {
+                    name: name || 'Yeni Üye', email: email, password: password,
+                    role: email === 'onurdmir22@gmail.com' ? 'admin' : 'user',
+                    vip: email === 'onurdmir22@gmail.com' ? true : false,
+                    status: 'Aktif'
+                };
+                users.push(newUser);
+                localStorage.setItem('bus_users', JSON.stringify(users));
+                currentUser = newUser;
+                localStorage.setItem('bus_current_user', JSON.stringify(currentUser));
+                closeAuthModal();
+                renderNavbarAuth();
+                if (currentUser.role === 'admin') {
+                    document.getElementById('navAdminBtn').classList.remove('hidden');
+                    switchView('admin');
+                }
+                alert('Kayıt oluşturuldu.');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('bus_current_user');
+            renderNavbarAuth();
+            document.getElementById('navAdminBtn').classList.add('hidden');
+            switchView('explore');
+        }
+
+        function handleSendVipRequest(e) {
+            e.preventDefault();
+            let req = {
+                id: Date.now(),
+                name: document.getElementById('vipReqName').value,
+                email: document.getElementById('vipReqEmail').value,
+                phone: document.getElementById('vipReqPhone').value,
+                message: document.getElementById('vipReqMessage').value,
+                date: new Date().toLocaleDateString('tr-TR')
+            };
+            vipRequests.push(req);
+            localStorage.setItem('bus_vip_requests', JSON.stringify(vipRequests));
+            closeVipRequestModal();
+            alert('VIP talebiniz gönderildi.');
+        }
+
+        function handleSendPushNotification(e) {
+            e.preventDefault();
+            alert('Bildirim başarıyla gönderildi!');
+            document.getElementById('pushTitleInput').value = '';
+            document.getElementById('pushMessageInput').value = '';
+        }
+
+        function handleAnnouncementSubmit(e) {
+            e.preventDefault();
+            let text = document.getElementById('adminAnnouncementInput').value;
+            let status = document.getElementById('adminAnnouncementStatus').value === 'true';
+            siteAnnouncement = { text, active: status };
+            localStorage.setItem('bus_announcement', JSON.stringify(siteAnnouncement));
+            renderAnnouncement();
+            alert('Duyuru güncellendi.');
+        }
+
+        function handleMovieSubmit(e) {
+            e.preventDefault();
+            let editId = document.getElementById('editMovieId').value;
+            let title = document.getElementById('movieTitleInput').value;
+            let category = document.getElementById('movieCategoryInput').value;
+            let type = document.getElementById('movieTypeInput').value;
+            let image = document.getElementById('movieImageInput').value;
+            let downloadUrl = document.getElementById('movieDownloadInput').value;
+            let description = document.getElementById('movieDescInput').value;
+
+            if (editId) {
+                let m = movies.find(x => x.id == editId);
+                if (m) { m.title = title; m.category = category; m.type = type; m.image = image; m.downloadUrl = downloadUrl; m.description = description; }
+            } else {
+                movies.push({ id: Date.now(), title, category, type, image, downloadUrl, description });
+            }
+            localStorage.setItem('bus_movies', JSON.stringify(movies));
+            closeMovieModal();
+            renderAdminPanel();
+            filterContent();
+            alert('Skin kaydedildi.');
+        }
+
+        function deleteMovie(id) {
+            if(confirm('Silmek istediğinize emin misiniz?')) {
+                movies = movies.filter(m => m.id !== id);
+                localStorage.setItem('bus_movies', JSON.stringify(movies));
+                renderAdminPanel(); filterContent();
+            }
+        }
+
+        function handleCategorySubmit(e) {
+            e.preventDefault();
+            let name = document.getElementById('categoryNameInput').value.trim();
+            if(name && !categories.includes(name)) {
+                categories.push(name);
+                localStorage.setItem('bus_categories', JSON.stringify(categories));
+                closeCategoryModal(); renderCategoryChips(); renderAdminPanel();
+                alert('Kategori eklendi.');
+            } else { alert('Geçersiz veya mevcut kategori.'); }
+        }
+
+        function deleteCategory(cat) {
+            if(confirm('Silmek istediğinize emin misiniz?')) {
+                categories = categories.filter(c => c !== cat);
+                localStorage.setItem('bus_categories', JSON.stringify(categories));
+                renderCategoryChips(); renderAdminPanel();
+            }
+        }
+
+        function handleUserSubmit(e) {
+            e.preventDefault();
+            let origEmail = document.getElementById('editUserOriginalEmail').value;
+            let name = document.getElementById('userNameInput').value;
+            let email = document.getElementById('userEmailInput').value;
+            let password = document.getElementById('userPasswordInput').value;
+            let role = document.getElementById('userRoleInput').value;
+            let vip = document.getElementById('userVipInput').value === 'true';
+
+            if (origEmail === 'onurdmir22@gmail.com' || email === 'onurdmir22@gmail.com') {
+                role = 'admin'; vip = true;
+            }
+
+            if (origEmail) {
+                let u = users.find(x => x.email === origEmail);
+                if(u) { u.name = name; u.email = email; u.password = password; u.role = role; u.vip = vip; }
+            } else {
+                if(users.some(x => x.email === email)) { alert('E-posta kayıtlı!'); return; }
+                users.push({ name, email, password, role, vip, status: 'Aktif' });
+            }
+            localStorage.setItem('bus_users', JSON.stringify(users));
+            closeUserModal(); renderAdminPanel();
+            alert('Kullanıcı güncellendi.');
+        }
+
+        function toggleUserStatus(email) {
+            if (email === 'onurdmir22@gmail.com') { alert('Master admin dondurulamaz!'); return; }
+            let u = users.find(x => x.email === email);
+            if(u) {
+                u.status = u.status === 'Aktif' ? 'Pasif' : 'Aktif';
+                localStorage.setItem('bus_users', JSON.stringify(users));
+                renderAdminPanel();
+            }
+        }
+
+        function deleteUser(email) {
+            if (email === 'onurdmir22@gmail.com') { alert('Master admin silinemez!'); return; }
+            if(confirm('Silmek istediğinize emin misiniz?')) {
+                users = users.filter(x => x.email !== email);
+                localStorage.setItem('bus_users', JSON.stringify(users));
+                renderAdminPanel();
+            }
+        }
+
+        function deleteVipRequest(id) {
+            vipRequests = vipRequests.filter(r => r.id !== id);
+            localStorage.setItem('bus_vip_requests', JSON.stringify(vipRequests));
+            renderAdminPanel();
+        }
+
+        function renderAdminPanel() {
+            let annInput = document.getElementById('adminAnnouncementInput');
+            if(annInput && siteAnnouncement) {
+                annInput.value = siteAnnouncement.text || '';
+                document.getElementById('adminAnnouncementStatus').value = siteAnnouncement.active ? 'true' : 'false';
+            }
+
+            let vipListEl = document.getElementById('vipRequestsList');
+            if (vipRequests.length === 0) {
+                vipListEl.innerHTML = `<p class="text-xs text-gray-400">Henüz gelen VIP talep yok.</p>`;
+            } else {
+                let vHtml = '';
+                vipRequests.forEach(req => {
+                    vHtml += `
+                        <div class="bg-dark-900 border border-dark-700 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="space-y-1">
+                                <div class="flex items-center space-x-2">
+                                    <span class="font-bold text-white text-sm">${req.name}</span>
+                                    <span class="text-xs text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border">${req.email}</span>
+                                    <span class="text-xs text-emerald-400 font-mono font-bold"><i class="fa-solid fa-phone mr-1"></i>${req.phone}</span>
+                                </div>
+                                <p class="text-xs text-gray-300"><b>Not:</b> ${req.message}</p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <a href="tel:${req.phone}" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-semibold"><i class="fa-solid fa-phone"></i></a>
+                                <button onclick="deleteVipRequest(${req.id})" class="px-3 py-1.5 rounded-lg bg-red-600/20 text-red-400 text-xs">Sil</button>
+                            </div>
+                        </div>`;
+                });
+                vipListEl.innerHTML = vHtml;
+            }
+
+            let catListEl = document.getElementById('adminCategoryList');
+            let cHtml = '';
+            categories.forEach(cat => {
+                cHtml += `<div class="bg-dark-900 border border-dark-700 p-3 rounded-xl flex items-center justify-between"><span class="text-xs font-semibold text-white">${cat}</span><button onclick="deleteCategory('${cat}')" class="text-red-400 text-xs"><i class="fa-solid fa-trash"></i></button></div>`;
+            });
+            catListEl.innerHTML = cHtml;
+
+            let movieListEl = document.getElementById('adminMovieList');
+            let mHtml = '';
+            movies.forEach(m => {
+                mHtml += `
+                    <tr class="border-b border-dark-700/50">
+                        <td class="py-3 px-4 flex items-center space-x-3"><img src="${m.image}" class="w-10 h-10 rounded-lg object-cover"><span class="font-semibold text-white">${m.title}</span></td>
+                        <td class="py-3 px-4 text-gray-300">${m.category}</td>
+                        <td class="py-3 px-4"><span class="px-2 py-1 rounded text-xs font-bold ${m.type === 'VIP' ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}">${m.type}</span></td>
+                        <td class="py-3 px-4 text-right space-x-2"><button onclick="openMovieModal(${m.id})" class="text-purple-400 text-xs">Düzenle</button><button onclick="deleteMovie(${m.id})" class="text-red-400 text-xs">Sil</button></td>
+                    </tr>`;
+            });
+            movieListEl.innerHTML = mHtml;
+
+            let userListEl = document.getElementById('adminUserList');
+            let uHtml = '';
+            users.forEach(u => {
+                let isMaster = u.email === 'onurdmir22@gmail.com';
+                uHtml += `
+                    <tr class="border-b border-dark-700/50">
+                        <td class="py-3 px-4 font-semibold text-white">${u.name} ${isMaster ? '<span class="text-[10px] bg-purple-500/20 text-purple-400 px-1.5 py-0.5 rounded ml-1">Master</span>' : ''}</td>
+                        <td class="py-3 px-4 text-gray-300 font-mono text-xs">${u.email}</td>
+                        <td class="py-3 px-4 text-gray-400 font-mono text-xs">${u.password}</td>
+                        <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs ${u.role === 'admin' ? 'bg-purple-500/20 text-purple-400 font-bold' : 'bg-gray-700 text-gray-300'}">${u.role}</span></td>
+                        <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs ${u.vip ? 'bg-amber-500/20 text-amber-400 font-bold' : 'bg-gray-700 text-gray-400'}">${u.vip ? 'VIP' : 'Normal'}</span></td>
+                        <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs ${u.status === 'Aktif' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}">${u.status || 'Aktif'}</span></td>
+                        <td class="py-3 px-4 text-right space-x-2">
+                            <button onclick="openUserModal('${u.email}')" class="text-purple-400 text-xs"><i class="fa-solid fa-pen"></i></button>
+                            ${!isMaster ? `<button onclick="toggleUserStatus('${u.email}')" class="text-amber-400 text-xs"><i class="fa-solid fa-ban"></i></button><button onclick="deleteUser('${u.email}')" class="text-red-400 text-xs"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </td>
+                    </tr>`;
+            });
+            userListEl.innerHTML = uHtml;
+        }
+    </script>
+</body>
+</html>
